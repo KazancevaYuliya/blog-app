@@ -63,12 +63,6 @@ class Posts {
   }
 
   async getPosts () {
-    // return new Promise((resolve, reject) => {
-    //   fetch('/api/posts')
-    //     .then((response) => response.json())
-    //     .then((data) => resolve(data.list))
-    //     .catch((error) => reject(error))
-    // })
     const response = await fetch('/api/posts')
     const data = await response.json()
 
@@ -78,13 +72,6 @@ class Posts {
   }
 
   async render () {
-    // this.getPosts()
-    //   .then(posts => {
-    //     const postsHTML = this.createPosts(posts)
-
-    //     this.containerElement.innerHTML = postsHTML
-    //   })
-
     const posts = await this.getPosts()
 
     const postsHTML = this.createPosts(posts)
