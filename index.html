@@ -1,72 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <script src="./dist/bundle.js" defer></script>
-</head>
-<body>
-  <div class="container w-75">
-    <div class="island my-4">
-      <div class="island__item d-flex align-items-center">
-        <h2 class="mb-0">Блог</h2>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Getting Started</title>
+    <script src="/bundle.js" defer></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="island">
+        <div class="island__item d-flex align-items-center">
+          <h2>Блог</h2>
 
-        <button type="button" class="btn btn-primary ms-auto" id="buttonCreatePost">
-          Создать пост
-        </button>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-3">
-        <div class="island" style="min-height: 500px" id="posts">
-
+          <button class="btn btn-primary ms-auto" id="buttonCreatePost">Создать пост</button>
         </div>
       </div>
 
-      <div class="col-9">
-        <div class="island" style="min-height: 500px">
-          <div class="island__item" id="post">
+      <div class="row" style="min-height: 460px;">
+        <div class="col-4">
+          <div class="island h-100" id="posts">
 
+          </div>
+        </div>
+
+        <div class="col-8">
+          <div class="island h-100">
+            <div class="island__item" id="post"></div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="modal fade" id="formModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Форма статьи</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-        </div>
-        <div class="modal-body">
-          <form id="form" method="POST">
-            <input type="hidden" name="id" id="id">
-            <input type="hidden" name="createdAt" id="createdAt">
+    <!-- Modal form -->
+    <div class="modal fade" id="formModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+          </div>
+          <div class="modal-body">
+            <form id="form" data-method="POST">
+              <input type="hidden" name="id">
+              <input type="hidden" name="createdAt">
 
-            <div class="mb-3">
-              <label for="title" class="form-label">Заголовок</label>
-              <input type="text" class="form-control" id="title" name="title">
-            </div>
-            <div class="mb-3">
-              <label for="author" class="form-label">Автор</label>
-              <input type="text" class="form-control" id="author" name="author">
-            </div>
-              <label for="content" class="form-label">Содержание</label>
-              <textarea class="form-control" id="content" rows="6" name="content"></textarea>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-          <button type="submit" class="btn btn-primary" form="form">Сохранить</button>
+              <div class="mb-3">
+                <label for="title" class="form-label">Заголовок</label>
+                <input type="text" class="form-control" id="title" name="title">
+              </div>
+              <div class="mb-3">
+                <label for="contentMd" class="form-label">Содержимое</label>
+                <textarea class="form-control" id="contentMd" name="contentMd"></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="author" class="form-label">Автор</label>
+                <input type="text" class="form-control" id="author" name="author">
+              </div>
+              <button type="submit" class="btn btn-primary">Сохранить</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</body>
+
+    <template id="postTemplate">
+      <h2>${ title }</h2>
+      <p class="text-muted"><time>${ createdAt }</time></p>
+      <div>${ html }</div>
+
+      <div class="mt-4">
+        <button class="btn btn-warning" data-role="edit">Редактировать</button>
+        <button class="btn btn-danger" data-role="remove">Удалить</button>
+      </div>
+    </template>
+  </body>
 </html>
