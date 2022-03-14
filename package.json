@@ -1,8 +1,8 @@
 {
-  "name": "template-webpack",
+  "name": "blog-app",
   "version": "1.0.0",
-  "description": "",
-  "private": true,
+  "description": "Run build `npm run build`",
+  "main": "index.js",
   "scripts": {
     "build": "webpack",
     "dev": "webpack --watch --progress",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gromalex/template-webpack.git"
+    "url": "git+https://github.com/KazancevaYuliya/template-webpack.git"
   },
   "author": "Yuliya",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/gromalex/template-webpack/issues"
+    "url": "https://github.com/KazancevaYuliya/template-webpack.git"
   },
-  "homepage": "https://github.com/gromalex/template-webpack#readme",
+  "homepage": "https://github.com/KazancevaYuliya/template-webpack#readme",
   "devDependencies": {
     "css-loader": "^6.6.0",
     "eslint": "^7.32.0",
@@ -36,6 +36,8 @@
   "dependencies": {
     "bootstrap": "^5.1.3",
     "express": "^4.17.1",
+    "marked": "^4.0.12",
     "nanoid": "^3.3.1"
-  }
+  },
+  "keywords": []
 }

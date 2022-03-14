@@ -1,47 +1,94 @@
 class Posts {
   constructor (containerElement) {
     this.containerElement = containerElement
-    this.baseUrl = '/api/posts'
+    this.currentPost = null
 
     this.init()
   }
 
   init () {
-    document.addEventListener('DOMContentLoaded', this.handleDOMReady.bind(this))
-    window.addEventListener('form.sent', this.handleDataSent.bind(this))
+    this.render()
+
+    this.handlePostsNeedsRender = this.handlePostsNeedsRender.bind(this)
+    this.handleClickPost = this.handleClickPost.bind(this)
+
+    window.addEventListener('posts:needsRender', this.handlePostsNeedsRender)
+    this.containerElement.addEventListener('click', this.handleClickPost)
   }
 
-  handleDOMReady () {
-    fetch(this.baseUrl)
-      .then(response => response.json())
-      .then(data => {
-        const { list } = data
-        this.render(list)
+  handlePostsNeedsRender () {
+    this.render()
+  }
+
+  handleClickPost (event) {
+    event.preventDefault()
+
+    const { target } = event
+
+    if (target.tagName === 'A') {
+      this.activatePost(target)
+
+      const event = new CustomEvent('post:click', {
+        detail: { id: target.id }
       })
+      window.dispatchEvent(event)
+    }
   }
 
-  handleDataSent ({ detail }) {
-    const { data } = detail
+  activatePost (element) {
+    if (this.currentPost) {
+      this.currentPost.classList.remove('active')
+    }
 
-    this.render(data.list)
+    element.classList.add('active')
+
+    this.currentPost = element
   }
 
-  buildTemplate (data) {
+  getTemplatePost ({ title, createdAt, id }) {
     return `
-      <div class="island__item" data-id="${data.id}">
-        <h4>${data.title}</h4>
-        <time class="text-muted">${data.createdAt}</time>
+      <div class="island__item">
+        <h6><a href="#${id}" id="${id}" class="stretched-link">${title}</a></h6>
+        <div class="text-mited"><time>${createdAt}</time></div>
       </div>
     `
   }
 
-  render (data) {
-    console.log(data)
-    const templates = data.map(item => {
-      return this.buildTemplate(item)
+  createPosts (posts) {
+    const result = posts.map((post) => {
+      return this.getTemplatePost(post)
     })
 
-    this.containerElement.innerHTML = templates.join('')
+    return result.join(' ')
+  }
+
+  async getPosts () {
+    // return new Promise((resolve, reject) => {
+    //   fetch('/api/posts')
+    //     .then((response) => response.json())
+    //     .then((data) => resolve(data.list))
+    //     .catch((error) => reject(error))
+    // })
+    const response = await fetch('/api/posts')
+    const data = await response.json()
+
+    console.log(data.list)
+
+    return data.list
+  }
+
+  async render () {
+    // this.getPosts()
+    //   .then(posts => {
+    //     const postsHTML = this.createPosts(posts)
+
+    //     this.containerElement.innerHTML = postsHTML
+    //   })
+
+    const posts = await this.getPosts()
+
+    const postsHTML = this.createPosts(posts)
+    this.containerElement.innerHTML = postsHTML
   }
 }
 

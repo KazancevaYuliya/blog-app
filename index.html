@@ -1,58 +1,78 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Getting Started</title>
-    <script src="/app.bundle.js" defer></script>
-  </head>
-  <body>
-    <div class="container">
-      <div class="island">
-        <div class="island__item d-flex align-items-center">
-          <h2>Blog</h2>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="/bundle.js" defer></script>
+</head>
+<body>
+  <div class="container w-75">
+    <div class="island my-4">
+      <div class="island__item d-flex align-items-center">
+        <h2 class="mb-0">Блог</h2>
 
-          <button class="btn btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#formModal">Создать пост</button>
+        <button type="button" class="btn btn-primary ms-auto" id="buttonCreatePost">
+          Создать пост
+        </button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-3">
+        <div class="island" style="min-height: 500px" id="posts">
+
         </div>
       </div>
 
-      <div class="row" style="min-height: 460px;">
-        <div class="col-4">
-          <div class="island h-100" id="posts">
+      <div class="col-9">
+        <div class="island" style="min-height: 500px">
+          <div class="island__item" id="post">
 
-          </div>
-        </div>
-
-        <div class="col-8">
-          <div class="island h-100">
-            <div class="island__item"></div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Modal form -->
-    <div class="modal fade" id="formModal" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form id="form">
-              <div class="mb-3">
-                <label for="title" class="form-label">Заголовок</label>
-                <input type="text" class="form-control" id="title" name="title">
-              </div>
-              <div class="mb-3">
-                <label for="content" class="form-label">Содержимое</label>
-                <textarea class="form-control" id="content" name="content"></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary">Создать</button>
-            </form>
-          </div>
+  <div class="modal fade" id="formModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Форма статьи</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="form">
+            <input type="hidden" name="id" id="id">
+            <input type="hidden" name="createdAt" id="createdAt">
+
+            <div class="mb-3">
+              <label for="title" class="form-label">Заголовок</label>
+              <input type="text" class="form-control" id="title" name="title">
+            </div>
+            <div class="mb-3">
+              <label for="author" class="form-label">Автор</label>
+              <input type="text" class="form-control" id="author" name="author">
+            </div>
+            <div class="mb-3">
+              <label for="lead" class="form-label">Лид</label>
+              <textarea class="form-control" id="lead" rows="3" name="lead"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="content" class="form-label">Содержание</label>
+              <textarea class="form-control" id="content" rows="6" name="content"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+          <button type="submit" class="btn btn-primary" form="form">Сохранить</button>
         </div>
       </div>
     </div>
-  </body>
+  </div>
+</body>
 </html>
+
