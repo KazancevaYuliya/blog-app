@@ -1,7 +1,6 @@
-import '../scss/app.scss'
-
 import { Modal } from 'bootstrap'
-
+// -------------------------------------------------------------------------------------------------
+import './scss/app.scss'
 import { Form } from './js/form'
 import { Posts } from './js/posts'
 import { Post } from './js/post'

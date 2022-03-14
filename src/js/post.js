@@ -1,111 +1,87 @@
-import { Modal } from 'bootstrap'
 import { marked } from 'marked'
+import { template } from 'lodash'
 
 class Post {
   constructor (containerElement) {
     this.containerElement = containerElement
+    this.templateElement = document.querySelector('#postTemplate')
+    this.baseUrl = 'api/posts'
+    this.currentPost = {}
+    this.url = ''
 
     this.init()
   }
 
   init () {
-    this.modalElement = document.querySelector('#formModal')
-    this.instanceModal = Modal.getOrCreateInstance(this.modalElement)
-
-    this.handlePostClick = this.handlePostClick.bind(this)
-    this.handleClickDelete = this.handleClickDelete.bind(this)
-    this.handleClickEdit = this.handleClickEdit.bind(this)
-    this.handlePostClear = this.handlePostClear.bind(this)
-
-    window.addEventListener('post:click', this.handlePostClick)
-    window.addEventListener('post:clear', this.handlePostClear)
-    this.containerElement.addEventListener('click', this.handleClickDelete)
-    this.containerElement.addEventListener('click', this.handleClickEdit)
+    window.addEventListener('posts.click', this.handlePostsClick.bind(this))
+    this.containerElement.addEventListener('click', this.handleClickButtonRemove.bind(this))
+    this.containerElement.addEventListener('click', this.handleClickButtonEdit.bind(this))
   }
 
-  async handlePostClick ({ detail }) {
-    const { id } = detail
+  handlePostsClick (event) {
+    const { id } = event.detail
+    const url = `${this.baseUrl}/${id}`
+    this.url = url
 
-    const data = await this.getPost(id)
-
-    this.render(data)
-  }
-
-  async getPost (id) {
-    const url = `/api/posts/${id}`
-
-    const response = await fetch(url)
-    const post = await response.json()
-
-    return post
-  }
-
-  getTemplatePost ({ title, content, author, createdAt, id }) {
-    const html = marked.parse(content)
-
-    return `
-      <h2>${title}</h2>
-      <div>
-        ${html}
-      </div>
-      <div class="text-muted mb-4">
-        Author: ${author}
-        <br>
-        Created at: ${createdAt}
-      </div>
-      <button type="button" class="btn btn-primary me-2" data-id="${id}" data-role="edit" >Редактировать</button>
-      <button type="button" class="btn btn-danger" data-id="${id}" data-role="delete" >Удалить</button>
-    `
-  }
-
-  handlePostClear () {
-    this.clear()
-  }
-
-  async handleClickEdit ({ target }) {
-    if (target.dataset.role === 'edit') {
-      const { id } = target.dataset
-
-      const data = await this.getPost(id)
-      const event = new CustomEvent('form:setEdit', {
-        detail: { data }
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        this.currentPost = data
+        const template = this.buildTemplate(data)
+        this.render(template)
       })
-      window.dispatchEvent(event)
+  }
+
+  handleClickButtonRemove (event) {
+    const { role } = event.target.dataset
+
+    if (role == 'remove') {
+      fetch(this.url, {
+        method: 'DELETE'
+      })
+        .then(response => response.json())
+        .then(data => {
+          const customEvent = new CustomEvent('post.removed', {
+            detail: { data }
+          })
+          window.dispatchEvent(customEvent)
+          this.containerElement.innerHTML = ''
+        })
     }
   }
 
-  async handleClickDelete ({ target }) {
-    if (target.dataset.role === 'delete') {
-      const { id } = target.dataset
+  handleClickButtonEdit (event) {
+    const { role } = event.target.dataset
 
-      const isRemove = confirm('Удалить пост?')
-
-      if (!isRemove) return
-
-      await this.removePost(id)
-      this.containerElement.innerHTML = ''
-
-      const event = new Event('posts:needsRender')
-      window.dispatchEvent(event)
+    if (role == 'edit') {
+      const customEvent = new CustomEvent('post.edit', {
+        detail: { data: this.currentPost }
+      })
+      window.dispatchEvent(customEvent)
     }
   }
 
-  async removePost (id) {
-    const url = `/api/posts/${id}`
+  buildTemplate (data) {
+    const templateHtml = this.templateElement.innerHTML
+    data.html = marked.parse(data.contentMd)
 
-    const response = await fetch(url, { method: 'DELETE' })
-    const post = await response.json()
+    // template = template
+    //   .replaceAll('{{title}}', data.title)
+    //   .replaceAll('{{createdAt}}', data.createdAt)
+    //   .replaceAll('{{content}}', data.content)
 
-    return post
+    // for (const key in data) {
+    //   template = template.replaceAll(`{{${key}}}`, data[key])
+    // }
+
+    const compiled = template(templateHtml)
+    const result = compiled(data)
+
+    return result
   }
 
-  render (data) {
-    const postHTML = this.getTemplatePost(data)
-    this.containerElement.innerHTML = postHTML
-  }
-
-  clear () {
-    this.containerElement.innerHTML = ''
+  render (html) {
+    this.containerElement.innerHTML = html
   }
 }
 

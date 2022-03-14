@@ -1,81 +1,78 @@
 class Posts {
   constructor (containerElement) {
     this.containerElement = containerElement
-    this.currentPost = null
+    this.baseUrl = '/api/posts'
+    this.activeElement = null
 
     this.init()
   }
 
   init () {
-    this.render()
-
-    this.handlePostsNeedsRender = this.handlePostsNeedsRender.bind(this)
-    this.handleClickPost = this.handleClickPost.bind(this)
-
-    window.addEventListener('posts:needsRender', this.handlePostsNeedsRender)
-    this.containerElement.addEventListener('click', this.handleClickPost)
+    document.addEventListener('DOMContentLoaded', this.handleDOMReady.bind(this))
+    window.addEventListener('form.sent', this.handleDataSent.bind(this))
+    window.addEventListener('post.removed', this.handlePostRemoved.bind(this))
+    this.containerElement.addEventListener('click', this.handleClickListItem.bind(this))
   }
 
-  handlePostsNeedsRender () {
-    this.render()
-  }
-
-  handleClickPost (event) {
-    event.preventDefault()
-
-    const { target } = event
-
-    if (target.tagName === 'A') {
-      this.activatePost(target)
-
-      const event = new CustomEvent('post:click', {
-        detail: { id: target.id }
+  handleDOMReady () {
+    fetch(this.baseUrl)
+      .then(response => response.json())
+      .then(data => {
+        const { list } = data
+        this.render(list)
       })
-      window.dispatchEvent(event)
+  }
+
+  handleDataSent ({ detail }) {
+    const { data } = detail
+
+    this.render(data.list)
+  }
+
+  handleClickListItem (event) {
+    const listItemElement = event.target.closest('.island__item')
+
+    if (listItemElement) {
+      const { id } = listItemElement.dataset
+
+      this.toggleActiveListItem(listItemElement)
+
+      const customEvent = new CustomEvent('posts.click', {
+        detail: { id }
+      })
+      window.dispatchEvent(customEvent)
     }
   }
 
-  activatePost (element) {
-    if (this.currentPost) {
-      this.currentPost.classList.remove('active')
-    }
-
-    element.classList.add('active')
-
-    this.currentPost = element
+  handlePostRemoved (event) {
+    const { data } = event.detail
+    this.render(data.list)
   }
 
-  getTemplatePost ({ title, createdAt, id }) {
+  buildTemplate (data) {
     return `
-      <div class="island__item">
-        <h6><a href="#${id}" id="${id}" class="stretched-link">${title}</a></h6>
-        <div class="text-mited"><time>${createdAt}</time></div>
+      <div class="island__item island__item_clickable" data-id="${data.id}">
+        <h4>${data.title}</h4>
+        <time class="text-muted">${data.createdAt}</time>
       </div>
     `
   }
 
-  createPosts (posts) {
-    const result = posts.map((post) => {
-      return this.getTemplatePost(post)
+  toggleActiveListItem (listItemElement) {
+    if (this.activeElement) {
+      this.activeElement.classList.remove('island__item_active')
+    }
+
+    listItemElement.classList.add('island__item_active')
+    this.activeElement = listItemElement
+  }
+
+  render (data) {
+    const templates = data.map(item => {
+      return this.buildTemplate(item)
     })
 
-    return result.join(' ')
-  }
-
-  async getPosts () {
-    const response = await fetch('/api/posts')
-    const data = await response.json()
-
-    console.log(data.list)
-
-    return data.list
-  }
-
-  async render () {
-    const posts = await this.getPosts()
-
-    const postsHTML = this.createPosts(posts)
-    this.containerElement.innerHTML = postsHTML
+    this.containerElement.innerHTML = templates.join('')
   }
 }
 

@@ -1,16 +1,11 @@
-function $ (selector) {
-  return document.querySelector(selector)
-}
-
-function $$ (selector) {
-  return [...document.querySelectorAll(selector)]
-}
-
 function resetForm (formElement) {
   formElement.reset()
 
-  const inputHiddenElements = $$('[type="hidden"]')
-  inputHiddenElements.forEach(inputElement => { inputElement.value = '' })
+  const inputHiddenElements = [...formElement.querySelectorAll('[type="hidden"]')]
+
+  inputHiddenElements.forEach(inputHiddenElement => {
+    inputHiddenElement.value = ''
+  })
 }
 
-export { $, $$, resetForm }
+export { resetForm }
