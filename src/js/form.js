@@ -36,7 +36,7 @@ class Form {
 
     const formData = new FormData(this.formElement)
 
-    for (const [name, value] of formData.entries()) {
+    for (const [name, value] of formData) {
       post[name] = value
     }
 
@@ -82,9 +82,6 @@ class Form {
       url += `/${data.id}`
     }
 
-    console.log(method)
-    console.log(url)
-
     const opts = {
       method,
       headers: {
@@ -92,6 +89,7 @@ class Form {
       },
       body: dataJson
     }
+
     await fetch(url, opts)
 
     const event = new Event('posts:needsRender')

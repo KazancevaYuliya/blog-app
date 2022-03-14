@@ -40,12 +40,11 @@ class Post {
     return post
   }
 
-  getTemplatePost ({ title, lead, content, author, createdAt, id }) {
+  getTemplatePost ({ title, content, author, createdAt, id }) {
     const html = marked.parse(content)
 
     return `
       <h2>${title}</h2>
-      <p class="lead"><strong>${lead}</strong></p>
       <div>
         ${html}
       </div>

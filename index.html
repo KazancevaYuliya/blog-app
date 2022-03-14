@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <script src="/bundle.js" defer></script>
+  <script src="./dist/bundle.js" defer></script>
 </head>
 <body>
   <div class="container w-75">
@@ -41,10 +41,10 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Форма статьи</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
         </div>
         <div class="modal-body">
-          <form id="form">
+          <form id="form" method="POST">
             <input type="hidden" name="id" id="id">
             <input type="hidden" name="createdAt" id="createdAt">
 
@@ -56,11 +56,6 @@
               <label for="author" class="form-label">Автор</label>
               <input type="text" class="form-control" id="author" name="author">
             </div>
-            <div class="mb-3">
-              <label for="lead" class="form-label">Лид</label>
-              <textarea class="form-control" id="lead" rows="3" name="lead"></textarea>
-            </div>
-            <div class="mb-3">
               <label for="content" class="form-label">Содержание</label>
               <textarea class="form-control" id="content" rows="6" name="content"></textarea>
             </div>
@@ -75,4 +70,3 @@
   </div>
 </body>
 </html>
-
